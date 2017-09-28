@@ -38,7 +38,7 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
         
         super.viewDidLoad()
         
-         self.tableView.register(UINib(nibName: "SRStoryListTableViewCell", bundle: nil), forCellReuseIdentifier: "SRStoryListTableViewCell")
+        self.tableView.register(UINib(nibName: "SRStoryListTableViewCell", bundle: nil), forCellReuseIdentifier: "SRStoryListTableViewCell")
         // Add Refresh Control to Table View
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
@@ -77,7 +77,7 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
     // MARK: StorySelectionDelegate Protocol Methods To Review Post in Webview
     
     func storyDidSelect(storyDTO: StoryModel){
-         performSegue(withIdentifier: "StoryDetail", sender: storyDTO)
+        performSegue(withIdentifier: "StoryDetail", sender: storyDTO)
     }
     
     // MARK: StorySelectionDelegate Protocol Methods To Delete Post
@@ -93,7 +93,7 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
         
         
     }
-     // MARK: Pull To Refresh Methods
+    // MARK: Pull To Refresh Methods
     
     @objc private func refreshPostsData(_ sender: Any) {
         self.downloadStoriesData {
@@ -130,21 +130,41 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
     
     func saveToDataPersistant(storyObj: Dictionary<String, Any>)  {
         
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
         do {
             
             let formatRequest : NSFetchRequest<Story> = Story.fetchRequest()
             formatRequest.predicate = NSPredicate(format: "created_at == %@", (storyObj["created_at"] as? String)!)
-            let fetchedResults = try context.fetch(formatRequest)
+            var fetchedResults =  [Story]()
+            if #available(iOS 10.0, *) {
+                let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+                fetchedResults = try context.fetch(formatRequest)
+            } else {
+                fetchedResults = try ad.managedObjectContext.fetch(formatRequest)
+            }
             if fetchedResults.first == nil {
                 var story: Story!
-                story = Story(context: context)
+                if #available(iOS 10.0, *) {
+                    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+                    story = Story(context: context)
+                } else {
+                    let entityDescription = NSEntityDescription.entity(forEntityName: "Story", in: ad.managedObjectContext)
+                    story = NSManagedObject(entity: entityDescription!, insertInto: ad.managedObjectContext) as! Story
+                    
+                }
                 if let storyTitle = storyObj["story_title"] as? String {
                     story.story_title = storyTitle
                 }
                 
                 if let authorName = storyObj["author"] as? String {
-                    let author = Author(context: context)
+                    var author: Author!
+                    if #available(iOS 10.0, *) {
+                        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+                        author = Author(context: context)
+                    } else {
+                        let entityDescription = NSEntityDescription.entity(forEntityName: "Author", in: ad.managedObjectContext)
+                        author = NSManagedObject(entity: entityDescription!, insertInto: ad.managedObjectContext) as! Author
+                    }
                     author.author = authorName
                     story.toAuthor = author
                 }
@@ -189,9 +209,13 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
         fetchRequest.predicate = NSPredicate(format: "delStatus == NO")
         let dateSort = NSSortDescriptor(key: "dateFilter", ascending: false)
         fetchRequest.sortDescriptors = [dateSort]
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        if #available(iOS 10.0, *) {
+            self.controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        } else {
+            self.controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: ad.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        }
         controller.delegate = self
-        self.controller = controller
+        //self.controller = controller
         self.dataSourceAndDelegate.controller = self.controller
         
         let currentDate = NSDate()
@@ -220,54 +244,54 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
     }
     
     /*
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        
-        tableView.beginUpdates()
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        
-        tableView.endUpdates()
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        
-        switch (type) {
-            
-        case.insert:
-            if let indexPath = newIndexPath {
-                
-                tableView.insertRows(at: [indexPath], with: .fade)
-            }
-            break
-            
-        case.delete:
-            
-            if let indexPath = indexPath {
-                
-                tableView.deleteRows(at: [indexPath], with: .fade)
-            }
-            break
-            
-        case .update:
-            
-            if  let indexPath = indexPath {
-                self.tableView.reloadRows(at: [indexPath], with: .none)
-                
-            }
-            break
-            
-        case.move:
-            
-            if let indexPath = indexPath{
-                
-                tableView.deleteRows(at: [indexPath], with: .fade)
-            }
-            if let indexPath = newIndexPath {
-                tableView.insertRows(at: [indexPath], with: .fade)
-            }
-            break
-        }
-    }
- */
+     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+     
+     tableView.beginUpdates()
+     }
+     
+     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+     
+     tableView.endUpdates()
+     }
+     
+     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+     
+     switch (type) {
+     
+     case.insert:
+     if let indexPath = newIndexPath {
+     
+     tableView.insertRows(at: [indexPath], with: .fade)
+     }
+     break
+     
+     case.delete:
+     
+     if let indexPath = indexPath {
+     
+     tableView.deleteRows(at: [indexPath], with: .fade)
+     }
+     break
+     
+     case .update:
+     
+     if  let indexPath = indexPath {
+     self.tableView.reloadRows(at: [indexPath], with: .none)
+     
+     }
+     break
+     
+     case.move:
+     
+     if let indexPath = indexPath{
+     
+     tableView.deleteRows(at: [indexPath], with: .fade)
+     }
+     if let indexPath = newIndexPath {
+     tableView.insertRows(at: [indexPath], with: .fade)
+     }
+     break
+     }
+     }
+     */
 }
