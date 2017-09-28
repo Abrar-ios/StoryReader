@@ -1,0 +1,6 @@
+framework module Pods_StoryReader {
+  umbrella header "Pods-StoryReader-umbrella.h"
+
+  export *
+  module * { export * }
+}

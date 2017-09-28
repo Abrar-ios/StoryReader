@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16G29" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Author" representedClassName="Author" syncable="YES" codeGenerationType="class">
+        <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="toStory" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Story" inverseName="toAuthor" inverseEntity="Story" syncable="YES"/>
+    </entity>
+    <entity name="Story" representedClassName="Story" syncable="YES" codeGenerationType="class">
+        <attribute name="created_at" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created_at_i" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="dateFilter" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="delStatus" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="story_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="story_title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="story_url" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="toAuthor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Author" inverseName="toStory" inverseEntity="Author" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Author" positionX="-54" positionY="36" width="128" height="75"/>
+        <element name="Story" positionX="-63" positionY="-18" width="128" height="165"/>
+    </elements>
+</model>
