@@ -110,6 +110,7 @@ class StoryModel {
         
     }
     */
+    
     init(storyObj: Story) {
         
         if let storyTitle = storyObj.story_title {

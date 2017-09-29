@@ -7,6 +7,5 @@ target 'StoryReader' do
   # Pods for StoryReader
 
     pod 'Alamofire'
-    pod 'DateToolsSwift'
 
 end

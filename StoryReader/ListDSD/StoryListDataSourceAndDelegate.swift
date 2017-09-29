@@ -7,6 +7,14 @@
 //
 
 import Foundation
+
+/**
+ The purpose of the `StoryListDataSourceAndDelegate` is Class to provide seperate datasoure and delegate implementation for tableview.
+ 
+ 
+ The `StoryListDataSourceAndDelegate` class is a subclass of the `NSObject`, and it conforms to the `UITableViewDelegate` protocol and `UITableViewDataSource` protocol.
+ */
+
 import UIKit
 import CoreData
 
@@ -30,6 +38,9 @@ class StoryListDataSourceAndDelegate:NSObject,UITableViewDelegate, UITableViewDa
      return totalCount
      }
      */
+    
+    // MARK: TableView Delegate Method to Implement number of Rows in list based on DataSource
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if let sections = controller.sections {
@@ -41,6 +52,8 @@ class StoryListDataSourceAndDelegate:NSObject,UITableViewDelegate, UITableViewDa
         
     }
     
+     // MARK: TableView Delegate Method to Implement number of Section in TableView
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         
         if let sections = controller.sections {
@@ -51,6 +64,8 @@ class StoryListDataSourceAndDelegate:NSObject,UITableViewDelegate, UITableViewDa
         return 0
         
     }
+    
+     // MARK: TableView Delegate Method to Render Cell
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -64,6 +79,8 @@ class StoryListDataSourceAndDelegate:NSObject,UITableViewDelegate, UITableViewDa
         
     }
     
+     // MARK: TableView Delegate Method to Implement Editing Functionality in TableView
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let storyDTO = controller.object(at: indexPath as IndexPath)
@@ -72,17 +89,13 @@ class StoryListDataSourceAndDelegate:NSObject,UITableViewDelegate, UITableViewDa
         }
     }
     
+     // MARK: TableView Delegate Method to To Show Selected Post In Detail View
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyDTO = controller.object(at: indexPath as IndexPath)
         let storyObj = StoryModel(storyObj: storyDTO)
         self.delegateStorySelection?.storyDidSelect(storyDTO:storyObj)
-        /*
-        if self.stories != nil {
-            let item = self.stories[indexPath.row]
-            self.delegateStorySelection?.storyDidSelect(storyDTO:item)
-            
-        }
- */
+    
         
     }
     

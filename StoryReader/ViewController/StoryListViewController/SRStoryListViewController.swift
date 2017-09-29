@@ -48,6 +48,7 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
         // Configure Refresh Control
         refreshControl.addTarget(self, action: #selector(refreshPostsData(_:)), for: .valueChanged)
         
+        // MARK: DataSource And Delegate instance allocation to Use for TableView
         self.dataSourceAndDelegate = StoryListDataSourceAndDelegate()
         self.dataSourceAndDelegate.controller = self.controller
         self.dataSourceAndDelegate.delegateStorySelection = self
@@ -115,7 +116,7 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
                     
                     for obj in list {
                         
-                        self.saveToDataPersistant(storyObj: obj)
+                        self.saveToDataPersistant(storyObj: obj)// save objects one by one in tableview
                     }
                     
                 }
@@ -154,6 +155,12 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
                 }
                 if let storyTitle = storyObj["story_title"] as? String {
                     story.story_title = storyTitle
+                    //print("if clause \(storyTitle)")
+                }else{
+                    if let storyTitle = storyObj["title"] as? String {
+                        story.story_title = storyTitle
+                       // print("else clause \(storyTitle)")
+                    }
                 }
                 
                 if let authorName = storyObj["author"] as? String {
@@ -170,7 +177,10 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
                 }
                 
                 if let ceationTime = storyObj["created_at"] as? String {
-                    
+                    /*
+                      convert string to date  to save in coredata as coredata taking NSDate type object  while swift
+                     using Date Type Object
+ */
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                     dateFormatter.timeZone = TimeZone(abbreviation: "GMT+0:00")
@@ -185,6 +195,10 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
                 
                 if let storyURL = storyObj["story_url"] as? String {
                     story.story_url = storyURL
+                }else{
+                    if let storyURL = storyObj["url"] as? String {
+                        story.story_url = storyURL
+                    }
                 }
                 
                 if let createdAt = storyObj["created_at_i"] as? Double {
@@ -243,7 +257,8 @@ class SRStoryListViewController: UIViewController,StorySelectionDelegate,NSFetch
         
     }
     
-    /*
+    /* Currently we are using to render in tableview we can implement in future full feature of fecthresultcontroller where we need to edit, create posts locally
+     
      func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
      
      tableView.beginUpdates()

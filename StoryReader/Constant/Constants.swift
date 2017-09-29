@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 let BASE_URL = "https://hn.algolia.com/api/v1/search_by_date?"
 let Query_Param = "query=ios"
 

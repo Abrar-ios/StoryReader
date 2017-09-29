@@ -7,15 +7,22 @@
 //
 
 import UIKit
-import DateToolsSwift
+
+/**
+ The purpose of the `SRStoryListTableViewCell` TableView Cell is to provide a user view for each Recent Post in List.
+ 
+ There's a  scene in the *SRStoryListTableViewCell.xib* file, and in that scene there are one Title Label and Author Name plus Posting Time. Go to Interface Builder for details.
+ 
+ The `SRStoryListTableViewCell` class is a subclass of the `UITableViewCell`.
+ */
 
 
 class SRStoryListTableViewCell: UITableViewCell {
 
+    // MARK: IBOutlet Properties
+    
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var authorAndTime: UILabel!
-    
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -28,16 +35,17 @@ class SRStoryListTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    // MARK: Cell UI Rendering Method to show post in List
+    
     func configureCell(storyDTO: Story, cdate: Date) {
         title.text = storyDTO.story_title
         var time = ""
         if let ceationTime = storyDTO.created_at {
             let dateFormatter = DateFormatter()
-            //2017-09-28T05:37:52.000Z
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" //Your date format
             dateFormatter.timeZone = TimeZone(abbreviation: "GMT+0:00") //Current time zone
             let date = dateFormatter.date(from: ceationTime)
-            time = cdate.offset(from: date!)
+            time = cdate.offset(from: date!) // Calculate time difference between current time and posted time
             if time.isEmpty {
                 time = "now"
             }
@@ -50,6 +58,8 @@ class SRStoryListTableViewCell: UITableViewCell {
     }
  
 }
+
+// Mark: Date Extensions to add some extra methods to get time on required format
 
 extension Date {
     /// Returns the amount of years from another date

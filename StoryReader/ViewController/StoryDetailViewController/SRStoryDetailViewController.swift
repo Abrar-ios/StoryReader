@@ -32,6 +32,7 @@ class SRStoryDetailViewController: UIViewController,UIWebViewDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
         super.viewDidAppear(animated)
         let url = URL(string: (self.storyDTO?._storyURL)!)
         if let unwrappedURL = url {
@@ -43,7 +44,7 @@ class SRStoryDetailViewController: UIViewController,UIWebViewDelegate {
                 
                 if error == nil {
                     
-                    self.webViewDetail.loadRequest(request)
+                    self.webViewDetail.loadRequest(request) // load request in webview with request url to show 
                     
                 } else {
                     
